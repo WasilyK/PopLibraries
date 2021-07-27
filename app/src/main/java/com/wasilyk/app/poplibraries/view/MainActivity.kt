@@ -2,7 +2,6 @@ package com.wasilyk.app.poplibraries.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import com.wasilyk.app.poplibraries.databinding.ActivityMainBinding
 import com.wasilyk.app.poplibraries.presenter.MainPresenter
 
@@ -16,20 +15,12 @@ class MainActivity : AppCompatActivity(), MainView {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        val listener = View.OnClickListener {
-            presenter.counterClick(it.id)
-        }
-
-        binding?.btnCounter1?.setOnClickListener(listener)
-        binding?.btnCounter2?.setOnClickListener(listener)
-        binding?.btnCounter3?.setOnClickListener(listener)
+        binding?.btnCounter1?.setOnClickListener { presenter.counterButton1Click() }
+        binding?.btnCounter2?.setOnClickListener { presenter.counterButton2Click() }
+        binding?.btnCounter3?.setOnClickListener { presenter.counterButton3Click() }
     }
 
-    override fun setButtonText(index: Int, text: String) {
-        when(index) {
-            0 -> binding?.btnCounter1?.text = text
-            1 -> binding?.btnCounter2?.text = text
-            2 -> binding?.btnCounter3?.text = text
-        }
-    }
+    override fun setButton1Text(text: String) { binding?.btnCounter1?.text = text }
+    override fun setButton2Text(text: String) { binding?.btnCounter2?.text = text }
+    override fun setButton3Text(text: String) { binding?.btnCounter3?.text = text }
 }
