@@ -1,6 +1,7 @@
 package com.wasilyk.app.poplibraries.presenter
 
 import com.github.terrakok.cicerone.Router
+import com.wasilyk.app.poplibraries.app.App
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
 import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
 import com.wasilyk.app.poplibraries.view.UserItemView
@@ -9,7 +10,8 @@ import moxy.MvpPresenter
 
 class UsersPresenter(
     private val usersRepo: GithubUsersRepo,
-    private val router: Router): MvpPresenter<UsersView>() {
+    private val router: Router,
+    private val screens: IScreens): MvpPresenter<UsersView>() {
 
     class UsersListPresenter: IUserListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -29,7 +31,8 @@ class UsersPresenter(
         loadData()
 
         usersListPresenter.itemClickListener = { itemView ->
-            //TODO
+            val login = usersListPresenter.users[itemView.pos].login
+            router.navigateTo(screens.user(GithubUser(login)))
         }
     }
 
