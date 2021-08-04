@@ -8,6 +8,6 @@ class UserPresenter(private val githubUser: GithubUser?): MvpPresenter<UserView>
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        viewState.setLogin(githubUser?.login?: "Unknown")
+        viewState.showUser(githubUser?.login?: "Unknown")
     }
 }
