@@ -6,12 +6,15 @@ import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
 import com.wasilyk.app.poplibraries.view.UserItemView
 import com.wasilyk.app.poplibraries.view.UserScreen
 import com.wasilyk.app.poplibraries.view.UsersView
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
 class UsersPresenter(
     private val usersRepo: GithubUsersRepo,
     private val router: Router
 ) : MvpPresenter<UsersView>() {
+
+    val disposables: CompositeDisposable = CompositeDisposable()
 
     class UsersListPresenter : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -37,13 +40,21 @@ class UsersPresenter(
     }
 
     private fun loadData() {
-        val users = usersRepo.getUsers()
-        usersListPresenter.users.addAll(users)
+        val disposable = usersRepo.getUsers().subscribe (
+            { users -> usersListPresenter.users.addAll(users) },
+            { _ -> return@subscribe }
+        )
+        disposables.add(disposable)
         viewState.updateList()
     }
 
     fun backPressed(): Boolean {
         router.exit()
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 }

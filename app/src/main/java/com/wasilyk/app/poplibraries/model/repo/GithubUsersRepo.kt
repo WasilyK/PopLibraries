@@ -1,6 +1,7 @@
 package com.wasilyk.app.poplibraries.model.repo
 
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
+import io.reactivex.rxjava3.core.Single
 
 class GithubUsersRepo {
     private val repositories = listOf(
@@ -13,5 +14,5 @@ class GithubUsersRepo {
         GithubUser("login7")
     )
 
-    fun getUsers(): List<GithubUser> = repositories
+    fun getUsers(): Single<List<GithubUser>> = Single.just(repositories)
 }
