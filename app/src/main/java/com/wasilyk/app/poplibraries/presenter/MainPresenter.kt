@@ -1,12 +1,18 @@
 package com.wasilyk.app.poplibraries.presenter
 
-import com.wasilyk.app.poplibraries.model.CountersModel
+import com.github.terrakok.cicerone.Router
 import com.wasilyk.app.poplibraries.view.MainView
+import com.wasilyk.app.poplibraries.view.UsersScreen
+import moxy.MvpPresenter
 
-class MainPresenter(private val view: MainView) {
-    private val model = CountersModel()
+class MainPresenter(
+    private val router: Router
+) : MvpPresenter<MainView>() {
 
-    fun counterButton1Click() = view.setButton1Text("${model.next(0)}")
-    fun counterButton2Click() = view.setButton2Text("${model.next(1)}")
-    fun counterButton3Click() = view.setButton3Text("${model.next(2)}")
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        router.newRootScreen(UsersScreen.create())
+    }
+
+    fun back() = router.exit()
 }
