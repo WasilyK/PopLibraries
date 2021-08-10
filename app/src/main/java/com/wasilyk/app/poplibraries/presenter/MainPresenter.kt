@@ -2,16 +2,17 @@ package com.wasilyk.app.poplibraries.presenter
 
 import com.github.terrakok.cicerone.Router
 import com.wasilyk.app.poplibraries.view.MainView
+import com.wasilyk.app.poplibraries.view.UsersScreen
 import moxy.MvpPresenter
 
-class MainPresenter(private val router: Router, val screens: IScreens): MvpPresenter<MainView>() {
+class MainPresenter(
+    private val router: Router
+) : MvpPresenter<MainView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        router.replaceScreen(screens.users(screens))
+        router.newRootScreen(UsersScreen.create())
     }
 
-    fun backClicked() {
-        router.exit()
-    }
+    fun back() = router.exit()
 }

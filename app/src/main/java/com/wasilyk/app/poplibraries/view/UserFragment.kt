@@ -3,6 +3,8 @@ package com.wasilyk.app.poplibraries.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import com.wasilyk.app.poplibraries.databinding.FragmentUserBinding
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
 import com.wasilyk.app.poplibraries.presenter.UserPresenter
@@ -14,10 +16,8 @@ class UserFragment: MvpAppCompatFragment(), UserView {
     companion object {
         private const val GITHUB_USER_KEY = "github_user_key"
 
-        fun newInstance(githubUser: GithubUser?): UserFragment {
-            val bundle = Bundle().also { it.putParcelable(GITHUB_USER_KEY, githubUser) }
-            return UserFragment().also { it.arguments = bundle }
-        }
+        fun newInstance(user: GithubUser?): Fragment =
+            UserFragment().apply { arguments = bundleOf(GITHUB_USER_KEY to user) }
     }
 
     private var binding: FragmentUserBinding? = null
@@ -34,7 +34,7 @@ class UserFragment: MvpAppCompatFragment(), UserView {
         binding = null
     }
 
-    override fun setLogin(login: String) {
+    override fun showUser(login: String) {
         binding?.tvLogin?.text = login
     }
 }

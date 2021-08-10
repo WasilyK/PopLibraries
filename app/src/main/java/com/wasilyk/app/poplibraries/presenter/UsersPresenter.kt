@@ -1,19 +1,22 @@
 package com.wasilyk.app.poplibraries.presenter
 
 import com.github.terrakok.cicerone.Router
-import com.wasilyk.app.poplibraries.app.App
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
 import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
 import com.wasilyk.app.poplibraries.view.UserItemView
+import com.wasilyk.app.poplibraries.view.UserScreen
 import com.wasilyk.app.poplibraries.view.UsersView
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
 class UsersPresenter(
     private val usersRepo: GithubUsersRepo,
-    private val router: Router,
-    private val screens: IScreens): MvpPresenter<UsersView>() {
+    private val router: Router
+) : MvpPresenter<UsersView>() {
 
-    class UsersListPresenter: IUserListPresenter {
+    val disposables: CompositeDisposable = CompositeDisposable()
+
+    class UsersListPresenter : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
         override var itemClickListener: ((UserItemView) -> Unit)? = null
         override fun getCount() = users.size
@@ -31,19 +34,27 @@ class UsersPresenter(
         loadData()
 
         usersListPresenter.itemClickListener = { itemView ->
-            val login = usersListPresenter.users[itemView.pos].login
-            router.navigateTo(screens.user(GithubUser(login)))
+            val user = usersListPresenter.users[itemView.pos]
+            router.navigateTo(UserScreen(user).create())
         }
     }
 
     private fun loadData() {
-        val users = usersRepo.getUsers()
-        usersListPresenter.users.addAll(users)
+        val disposable = usersRepo.getUsers().subscribe (
+            { users -> usersListPresenter.users.addAll(users) },
+            { _ -> return@subscribe }
+        )
+        disposables.add(disposable)
         viewState.updateList()
     }
 
     fun backPressed(): Boolean {
         router.exit()
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 }

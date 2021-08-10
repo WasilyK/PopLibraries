@@ -4,23 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.wasilyk.app.poplibraries.app.App
+import com.wasilyk.app.poplibraries.app.App.Navigation.router
 import com.wasilyk.app.poplibraries.databinding.FragmentUsersBinding
 import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
 import com.wasilyk.app.poplibraries.presenter.BackButtonListener
-import com.wasilyk.app.poplibraries.presenter.IScreens
 import com.wasilyk.app.poplibraries.presenter.UsersPresenter
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-class UsersFragment(private val screens: IScreens): MvpAppCompatFragment(), UsersView, BackButtonListener {
+class UsersFragment: MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     companion object {
-        fun newInstance(screens: IScreens) = UsersFragment(screens)
+        fun newInstance() = UsersFragment()
     }
 
     private var binding: FragmentUsersBinding? = null
-    private val presenter by moxyPresenter { UsersPresenter(GithubUsersRepo(), App.instance.router, screens) }
+    private val presenter by moxyPresenter { UsersPresenter(GithubUsersRepo(), router) }
     private var adapter: UsersRVAdapter? = null
 
     override fun onCreateView(
