@@ -3,10 +3,11 @@ package com.wasilyk.app.poplibraries.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wasilyk.app.poplibraries.app.App.Navigation.router
 import com.wasilyk.app.poplibraries.databinding.FragmentUsersBinding
-import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
+import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepoFactory
 import com.wasilyk.app.poplibraries.presenter.BackButtonListener
 import com.wasilyk.app.poplibraries.presenter.UsersPresenter
 import moxy.MvpAppCompatFragment
@@ -19,7 +20,7 @@ class UsersFragment: MvpAppCompatFragment(), UsersView, BackButtonListener {
     }
 
     private var binding: FragmentUsersBinding? = null
-    private val presenter by moxyPresenter { UsersPresenter(GithubUsersRepo(), router) }
+    private val presenter by moxyPresenter { UsersPresenter(GithubUsersRepoFactory.create(), router) }
     private var adapter: UsersRVAdapter? = null
 
     override fun onCreateView(
@@ -43,6 +44,10 @@ class UsersFragment: MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     override fun updateList() {
         adapter?.notifyDataSetChanged()
+    }
+
+    override fun showToast(message: String) {
+        Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
     }
 
     override fun backPressed() = presenter.backPressed()

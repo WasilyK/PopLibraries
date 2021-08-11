@@ -12,8 +12,9 @@ class UsersRVAdapter(private val presenter: IUserListPresenter):
     inner class ViewHolder(private val binding: ViewItemUserBinding):
         RecyclerView.ViewHolder(binding.root), UserItemView {
 
-        override fun setLogin(login: String) = with(binding) {
+        override fun setUser(login: String, avatar_url: String) = with(binding) {
             tvLogin.text = login
+            tvLogin.setStartDrawableCircleImageFromUri(avatar_url)
         }
 
         override var pos = -1

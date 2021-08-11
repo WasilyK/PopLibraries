@@ -1,5 +1,5 @@
 package com.wasilyk.app.poplibraries.view
 
 interface UserItemView: IItemView {
-    fun setLogin(login: String)
+    fun setUser(login: String, avatar_url: String)
 }
