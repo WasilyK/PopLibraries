@@ -3,6 +3,7 @@ package com.wasilyk.app.poplibraries.model.repo
 import com.wasilyk.app.poplibraries.model.datasource.CacheUsersDataSource
 import com.wasilyk.app.poplibraries.model.datasource.UsersDataSource
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
+import com.wasilyk.app.poplibraries.model.entity.GithubUserRepo
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -20,7 +21,9 @@ class GithubUsersRepo(
 
     override fun getUserByLogin(login: String?): Maybe<GithubUser> =
         cacheUsersDataSource.getUserByLogin(login)
-            .subscribeOn(Schedulers.io())
             .switchIfEmpty(usersDataSource.getUserByLogin(login))
             .subscribeOn(Schedulers.io())
+
+    override fun getUserRepos(url: String): Maybe<List<GithubUserRepo>> =
+        usersDataSource.getUserRepos(url)
 }

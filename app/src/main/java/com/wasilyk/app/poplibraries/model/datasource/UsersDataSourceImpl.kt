@@ -2,6 +2,7 @@ package com.wasilyk.app.poplibraries.model.datasource
 
 import com.wasilyk.app.poplibraries.model.api.GithubApi
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
+import com.wasilyk.app.poplibraries.model.entity.GithubUserRepo
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 
@@ -18,5 +19,8 @@ class UsersDataSourceImpl(private val githubApi: GithubApi): UsersDataSource {
 
 
     }
+
+    override fun getUserRepos(url: String): Maybe<List<GithubUserRepo>> =
+        githubApi.getUserRepos(url).toMaybe()
 
 }

@@ -1,6 +1,7 @@
 package com.wasilyk.app.poplibraries.model.datasource
 
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
+import com.wasilyk.app.poplibraries.model.entity.GithubUserRepo
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 
@@ -24,4 +25,6 @@ class CacheUsersDataSourceImpl: CacheUsersDataSource {
                 ?.let { user -> Maybe.just(user) }
                 ?: Maybe.empty()
         }
+
+    override fun getUserRepos(url: String): Maybe<List<GithubUserRepo>> = Maybe.empty()
 }
