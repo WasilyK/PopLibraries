@@ -17,5 +17,11 @@ class App: Application() {
         }
         val navigatorHolder get() = cicerone.getNavigatorHolder()
         val router get() = cicerone.router
+        var instance: App? = null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
     }
 }
