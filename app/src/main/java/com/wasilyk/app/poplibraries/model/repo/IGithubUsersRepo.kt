@@ -8,5 +8,5 @@ import io.reactivex.rxjava3.core.Observable
 interface IGithubUsersRepo {
     fun getUsers(): Observable<List<GithubUser>>
     fun getUserByLogin(login: String?): Maybe<GithubUser>
-    fun getUserRepos(url: String): Maybe<List<GithubUserRepo>>
+    fun getUserRepos(url: String): Observable<List<GithubUserRepo>>
 }
