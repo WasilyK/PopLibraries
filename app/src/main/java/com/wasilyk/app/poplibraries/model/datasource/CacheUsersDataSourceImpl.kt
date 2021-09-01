@@ -1,5 +1,6 @@
 package com.wasilyk.app.poplibraries.model.datasource
 
+import android.util.Log
 import com.wasilyk.app.poplibraries.model.entity.GithubUser
 import com.wasilyk.app.poplibraries.model.entity.GithubUserRepo
 import io.reactivex.rxjava3.core.Maybe
@@ -21,9 +22,22 @@ class CacheUsersDataSourceImpl(
             .andThen(getUserByLogin(user.login))
             .toSingle()
 
-    override fun retainRepos(userRepos: List<GithubUserRepo>) {
-        roomGithubReposCache
-            .retain(userRepos)
+    override fun retainRepos(userRepos: List<GithubUserRepo>, userId: String):
+            Single<List<GithubUserRepo>> {
+        userRepos.forEach {
+            it.userId = userId
+        }
+        return roomGithubReposCache
+            .insert(userRepos)
+            .andThen(getUserRepos(userId))
+            .toSingle()
+    }
+
+    override fun getUserIdByReposUrl(url: String): String {
+        val id = roomGithubUsersCache
+            .fetchUserIdByReposUrl(url)
+        Log.d("TAG", "id = $id url = $url")
+        return id
     }
 
     override fun getUsers(): Single<List<GithubUser>> =
@@ -36,6 +50,6 @@ class CacheUsersDataSourceImpl(
 
     override fun getUserRepos(url: String): Maybe<List<GithubUserRepo>> =
         roomGithubReposCache
-            .selectRepos()
+            .selectRepos(url)
             .toMaybe()
 }

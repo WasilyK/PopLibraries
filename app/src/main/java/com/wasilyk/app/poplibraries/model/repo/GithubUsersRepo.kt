@@ -32,8 +32,9 @@ class GithubUsersRepo(
             usersDataSource
                 .getUserRepos(url)
                 .flatMap {
-                    cacheUsersDataSource.retainRepos(it)
-                    cacheUsersDataSource.getUserRepos(url)
+                    cacheUsersDataSource
+                        .retainRepos(it, cacheUsersDataSource.getUserIdByReposUrl(url))
+                        .toMaybe()
                 }
                 .toObservable()
         )
