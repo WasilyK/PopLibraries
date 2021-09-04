@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.wasilyk.app.poplibraries.app.App.Navigation.router
+import com.wasilyk.app.poplibraries.app.App
 import com.wasilyk.app.poplibraries.databinding.FragmentUsersBinding
-import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepoFactory
 import com.wasilyk.app.poplibraries.presenter.BackButtonListener
-import com.wasilyk.app.poplibraries.presenter.UsersPresenter
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -20,7 +18,7 @@ class UsersFragment: MvpAppCompatFragment(), UsersView, BackButtonListener {
     }
 
     private var binding: FragmentUsersBinding? = null
-    private val presenter by moxyPresenter { UsersPresenter(GithubUsersRepoFactory.create(), router) }
+    private val presenter by moxyPresenter { App.instance.appComponent.getUsersPresenter() }
     private var adapter: UsersRVAdapter? = null
 
     override fun onCreateView(

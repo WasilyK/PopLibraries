@@ -9,10 +9,9 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.wasilyk.app.poplibraries.app.App
 import com.wasilyk.app.poplibraries.databinding.FragmentUserBinding
 import com.wasilyk.app.poplibraries.model.entity.GithubUserRepo
-import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepoFactory
-import com.wasilyk.app.poplibraries.presenter.UserPresenter
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -28,9 +27,11 @@ class UserFragment : MvpAppCompatFragment(), UserView {
     private var binding: FragmentUserBinding? = null
     private var reposAdapter: UserReposRVAdapter? = null
     private val presenter by moxyPresenter {
-        UserPresenter(
-            arguments?.getString(GITHUB_USER_LOGIN_KEY), GithubUsersRepoFactory.create()
-        )
+        App.instance
+            .appComponent
+            .getUserPresCompFactory()
+            .create(arguments?.getString(GITHUB_USER_LOGIN_KEY)?: "unknown")
+            .getUserPresenter()
     }
 
 
