@@ -24,6 +24,19 @@ class GithubUsersRepo(
             .switchIfEmpty(usersDataSource.getUserByLogin(login))
             .subscribeOn(Schedulers.io())
 
-    override fun getUserRepos(url: String): Maybe<List<GithubUserRepo>> =
-        usersDataSource.getUserRepos(url)
+    override fun getUserRepos(url: String): Observable<List<GithubUserRepo>> =
+        Observable.concat(
+            cacheUsersDataSource
+                .getUserRepos(url)
+                .toObservable(),
+            usersDataSource
+                .getUserRepos(url)
+                .flatMap {
+                    cacheUsersDataSource
+                        .retainRepos(it, cacheUsersDataSource.getUserIdByReposUrl(url))
+                        .toMaybe()
+                }
+                .toObservable()
+        )
+            .subscribeOn(Schedulers.io())
 }
