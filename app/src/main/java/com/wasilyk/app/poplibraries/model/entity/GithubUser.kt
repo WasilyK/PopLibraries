@@ -11,6 +11,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "github_users")
 data class GithubUser(
     @PrimaryKey
+    @ColumnInfo(name = "id")
     @SerializedName("id")
     val id: String,
 

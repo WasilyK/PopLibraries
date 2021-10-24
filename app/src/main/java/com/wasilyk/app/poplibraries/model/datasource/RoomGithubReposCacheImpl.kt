@@ -8,16 +8,17 @@ import io.reactivex.rxjava3.core.Single
 class RoomGithubReposCacheImpl(
     private val storage: GithubStorage
 ): RoomGithubReposCache {
-    override fun selectRepos(): Single<List<GithubUserRepo>> =
+    override fun selectRepos(userId: String): Single<List<GithubUserRepo>> =
         storage
             .githubUserReposDao()
-            .selectRepos()
+            .selectRepos(userId)
 
-    override fun retain(repos: List<GithubUserRepo>): Completable {
+    override fun insert(repos: List<GithubUserRepo>): Completable {
         return storage
             .githubUserReposDao()
-            .retain(repos)
+            .insert(repos)
     }
+
     override fun update(repo: GithubUserRepo): Completable =
         storage
             .githubUserReposDao()

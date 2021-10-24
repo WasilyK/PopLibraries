@@ -7,11 +7,11 @@ import io.reactivex.rxjava3.core.Single
 
 @Dao
 interface GithubUserReposDao {
-    @Query("SELECT * FROM github_user_repos")
-    fun selectRepos(): Single<List<GithubUserRepo>>
+    @Query("SELECT * FROM github_user_repos WHERE user_id = :userId")
+    fun selectRepos(userId: String): Single<List<GithubUserRepo>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun retain(repos: List<GithubUserRepo>): Completable
+    fun insert(repos: List<GithubUserRepo>): Completable
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(repo: GithubUserRepo): Completable

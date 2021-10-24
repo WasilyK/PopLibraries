@@ -19,6 +19,12 @@ class RoomGithubUsersCacheImpl(private val githubStorage: GithubStorage) : RoomG
             .fetchUserByLogin(login)
     }
 
+    override fun fetchUserIdByReposUrl(url: String): String {
+        return githubStorage
+            .githubUserDao()
+            .fetchUserIdByReposUrl(url)
+    }
+
     override fun retain(users: List<GithubUser>): Completable {
         return githubStorage
             .githubUserDao()

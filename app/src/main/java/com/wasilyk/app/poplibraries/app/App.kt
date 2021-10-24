@@ -2,26 +2,26 @@ package com.wasilyk.app.poplibraries.app
 
 import android.app.Application
 import android.content.Context
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Router
+import com.wasilyk.app.poplibraries.di.components.AppComponent
+import com.wasilyk.app.poplibraries.di.components.DaggerAppComponent
 
 class App: Application() {
+
+    lateinit var appComponent: AppComponent
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
     }
 
-    companion object Navigation {
-        private val cicerone: Cicerone<Router> by lazy {
-            Cicerone.create()
-        }
-        val navigatorHolder get() = cicerone.getNavigatorHolder()
-        val router get() = cicerone.router
-        var instance: App? = null
+    companion object {
+        lateinit var instance: App
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
+        appComponent = DaggerAppComponent
+            .factory()
+            .create(this)
     }
 }
