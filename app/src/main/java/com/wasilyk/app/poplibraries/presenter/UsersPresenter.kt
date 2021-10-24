@@ -1,28 +1,31 @@
 package com.wasilyk.app.poplibraries.presenter
 
 import com.github.terrakok.cicerone.Router
-import com.wasilyk.app.poplibraries.model.entity.GithubUser
-import com.wasilyk.app.poplibraries.model.repo.GithubUsersRepo
+import com.wasilyk.app.poplibraries.model.repo.IGithubUsersRepo
+import com.wasilyk.app.poplibraries.view.GithubUserViewModel
 import com.wasilyk.app.poplibraries.view.UserItemView
 import com.wasilyk.app.poplibraries.view.UserScreen
 import com.wasilyk.app.poplibraries.view.UsersView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 
 class UsersPresenter(
-    private val usersRepo: GithubUsersRepo,
+    private val usersRepo: IGithubUsersRepo,
     private val router: Router
 ) : MvpPresenter<UsersView>() {
 
-    val disposables: CompositeDisposable = CompositeDisposable()
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     class UsersListPresenter : IUserListPresenter {
-        val users = mutableListOf<GithubUser>()
+        val users = mutableListOf<GithubUserViewModel>()
         override var itemClickListener: ((UserItemView) -> Unit)? = null
         override fun getCount() = users.size
         override fun bindView(view: UserItemView) {
             val user = users[view.pos]
-            view.setLogin(user.login)
+            view.setUser(user.login, user.avatar_url)
         }
     }
 
@@ -34,18 +37,33 @@ class UsersPresenter(
         loadData()
 
         usersListPresenter.itemClickListener = { itemView ->
-            val user = usersListPresenter.users[itemView.pos]
-            router.navigateTo(UserScreen(user).create())
+            val login = usersListPresenter.users[itemView.pos].login
+            router.navigateTo(UserScreen(login).create())
         }
     }
 
     private fun loadData() {
-        val disposable = usersRepo.getUsers().subscribe (
-            { users -> usersListPresenter.users.addAll(users) },
-            { _ -> return@subscribe }
-        )
-        disposables.add(disposable)
-        viewState.updateList()
+        disposables +=
+            usersRepo.getUsers()
+                .observeOn(Schedulers.computation())
+                .map { users ->
+                    val list = mutableListOf<GithubUserViewModel>()
+                    for (i in users.indices) {
+                        list.add(GithubUserViewModel.Mapper.map(users[i]))
+                    }
+                    list
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { users ->
+                        usersListPresenter.users.addAll(users)
+                        viewState.updateList()
+                    },
+                    { error ->
+                        viewState.showToast(error.message ?: "Load users error")
+                    }
+                )
+
     }
 
     fun backPressed(): Boolean {
